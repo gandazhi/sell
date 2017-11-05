@@ -7,8 +7,12 @@ spring:
 server:
   context-path: /sell
 mybatis:
-  mapperLocations: classpath:/resources/mappers/*.xml
-  typeAliasesPackage: com.gandazhi.sell.pojo
+    # 配置类型别名
+    typeAliasesPackage: com.gandazhi.sell.pojo
+    # 配置mapper的扫描，找到所有的mapper.xml映射文件
+    mapperLocations: classpath*:mappers/*Mapper.xml
+
+
 
 
 

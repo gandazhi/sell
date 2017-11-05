@@ -1,9 +1,9 @@
 package com.gandazhi.sell.dao;
 
 import com.gandazhi.sell.pojo.ProductCategory;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Locale;
 
 public interface ProductCategoryMapper {
     int deleteByPrimaryKey(Integer categoryId);
@@ -18,5 +18,5 @@ public interface ProductCategoryMapper {
 
     int updateByPrimaryKey(ProductCategory record);
 
-    List<ProductCategory> selectByCategoryTypeList(List<Integer> categoryTypeList);
+    List<ProductCategory> selectByCategoryTypeList(@Param("categoryTypeList") List<Integer> categoryTypeList);
 }

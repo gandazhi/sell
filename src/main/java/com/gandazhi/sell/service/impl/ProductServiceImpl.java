@@ -49,6 +49,7 @@ public class ProductServiceImpl implements IProductService {
             productVo.setCategoryName(productCategory.getCategoryName());
             productVo.setCategoryType(productCategory.getCategoryType());
             productVo.setProductInfoVoList(productInfoVoList);
+            productVoList.add(productVo);
         }
         return productVoList;
     }
