@@ -1,24 +1,29 @@
 package com.gandazhi.sell.pojo;
 
-import lombok.Data;
-import org.hibernate.annotations.DynamicUpdate;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.util.Date;
 
-@Entity
-@DynamicUpdate
-@Data
 public class ProductCategory {
-    @Id
-    @GeneratedValue
     private Integer categoryId;
+
     private String categoryName;
+
     private Integer categoryType;
+
     private Date createTime;
+
     private Date updateTime;
+
+    public ProductCategory(Integer categoryId, String categoryName, Integer categoryType, Date createTime, Date updateTime) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.categoryType = categoryType;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
+
+    public ProductCategory() {
+        super();
+    }
 
     public Integer getCategoryId() {
         return categoryId;
@@ -33,7 +38,7 @@ public class ProductCategory {
     }
 
     public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+        this.categoryName = categoryName == null ? null : categoryName.trim();
     }
 
     public Integer getCategoryType() {
@@ -44,11 +49,19 @@ public class ProductCategory {
         this.categoryType = categoryType;
     }
 
-    public ProductCategory() {
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public ProductCategory(String categoryName, Integer categoryType) {
-        this.categoryName = categoryName;
-        this.categoryType = categoryType;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

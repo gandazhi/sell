@@ -3,42 +3,55 @@ package com.gandazhi.sell.pojo;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ProductInfo {
+public class OrderDetail {
+    private String detailId;
+
+    private String orderId;
+
     private String productId;
 
     private String productName;
 
     private BigDecimal productPrice;
 
-    private Integer productStock;
-
-    private String productDescription;
+    private Integer productQuantity;
 
     private String productIcon;
-
-    private Byte productStatus;
-
-    private Integer categoryType;
 
     private Date createTime;
 
     private Date updateTime;
 
-    public ProductInfo(String productId, String productName, BigDecimal productPrice, Integer productStock, String productDescription, String productIcon, Byte productStatus, Integer categoryType, Date createTime, Date updateTime) {
+    public OrderDetail(String detailId, String orderId, String productId, String productName, BigDecimal productPrice, Integer productQuantity, String productIcon, Date createTime, Date updateTime) {
+        this.detailId = detailId;
+        this.orderId = orderId;
         this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
-        this.productStock = productStock;
-        this.productDescription = productDescription;
+        this.productQuantity = productQuantity;
         this.productIcon = productIcon;
-        this.productStatus = productStatus;
-        this.categoryType = categoryType;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
 
-    public ProductInfo() {
+    public OrderDetail() {
         super();
+    }
+
+    public String getDetailId() {
+        return detailId;
+    }
+
+    public void setDetailId(String detailId) {
+        this.detailId = detailId == null ? null : detailId.trim();
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId == null ? null : orderId.trim();
     }
 
     public String getProductId() {
@@ -65,20 +78,12 @@ public class ProductInfo {
         this.productPrice = productPrice;
     }
 
-    public Integer getProductStock() {
-        return productStock;
+    public Integer getProductQuantity() {
+        return productQuantity;
     }
 
-    public void setProductStock(Integer productStock) {
-        this.productStock = productStock;
-    }
-
-    public String getProductDescription() {
-        return productDescription;
-    }
-
-    public void setProductDescription(String productDescription) {
-        this.productDescription = productDescription == null ? null : productDescription.trim();
+    public void setProductQuantity(Integer productQuantity) {
+        this.productQuantity = productQuantity;
     }
 
     public String getProductIcon() {
@@ -87,22 +92,6 @@ public class ProductInfo {
 
     public void setProductIcon(String productIcon) {
         this.productIcon = productIcon == null ? null : productIcon.trim();
-    }
-
-    public Byte getProductStatus() {
-        return productStatus;
-    }
-
-    public void setProductStatus(Byte productStatus) {
-        this.productStatus = productStatus;
-    }
-
-    public Integer getCategoryType() {
-        return categoryType;
-    }
-
-    public void setCategoryType(Integer categoryType) {
-        this.categoryType = categoryType;
     }
 
     public Date getCreateTime() {
