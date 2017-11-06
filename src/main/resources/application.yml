@@ -4,11 +4,14 @@ spring:
     username: root
     password: gandazhi
     url: jdbc:mysql://127.0.0.1:3306/wx_takeaway?characterEncoding=utf-8&useSSL=false
-  jpa:
-    show-sql: true
+server:
+  context-path: /sell
 mybatis:
-  mapperLocations: classpath:mapper/*.xml
-  typeAliasesPackage: com.gandazhi.sell.pojo
+    # 配置类型别名
+    typeAliasesPackage: com.gandazhi.sell.pojo
+    # 配置mapper的扫描，找到所有的mapper.xml映射文件
+    mapperLocations: classpath*:mappers/*Mapper.xml
+
 
 
 
