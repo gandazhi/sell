@@ -11,7 +11,11 @@ mybatis:
     typeAliasesPackage: com.gandazhi.sell.pojo
     # 配置mapper的扫描，找到所有的mapper.xml映射文件
     mapperLocations: classpath*:mappers/*Mapper.xml
-
+#pagehelper:
+#  helperDialect: mysql
+#  reasonable: true
+#  supportMethodsArguments: true
+#  params: countSql
 
 
 
