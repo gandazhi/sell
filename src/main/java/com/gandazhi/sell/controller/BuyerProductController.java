@@ -18,8 +18,8 @@ public class BuyerProductController {
 
     /**
      * 获取不同分类下的全部商品
-     * @param pageNum
-     * @param pageSize
+     * @param pageNum 分页，当前显示的页数
+     * @param pageSize 分页，每页显示的个数
      * @return
      */
     @GetMapping("/list")
