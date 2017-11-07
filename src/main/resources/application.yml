@@ -4,6 +4,9 @@ spring:
     username: root
     password: gandazhi
     url: jdbc:mysql://127.0.0.1:3306/wx_takeaway?characterEncoding=utf-8&useSSL=false
+  redis:
+      host: 127.0.0.1
+      port: 6379
 server:
   context-path: /sell
 mybatis:
