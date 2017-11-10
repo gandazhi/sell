@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import redis.clients.jedis.Jedis;
 
 import java.util.*;
@@ -81,9 +80,6 @@ public class CartServiceImpl implements ICartService {
             jedis.set(KEY, gson.toJson(cartRedisListDto));
             jedis.close();
         } else {
-//            for (int i = 0; i < oldCartRedisListDto.getCartRedisDtos().size(); i++) {
-//                newCartRedisDtoList.add(oldCartRedisListDto.getCartRedisDtos().get(i));
-//            }
             List<CartRedisDto> oldCartRedisDtoList = oldCartRedisListDto.getCartRedisDtos();
             List<CartRedisDto> checkCartRedisDto = Lists.newArrayList();
             boolean isOldCart = true;

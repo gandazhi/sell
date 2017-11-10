@@ -1,10 +1,12 @@
 package com.gandazhi.sell.redis;
 
+import com.gandazhi.sell.common.RedisIndex;
 import com.gandazhi.sell.dto.CartRedisDto;
 import com.gandazhi.sell.dto.CartRedisListDto;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import lombok.extern.java.Log;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,13 +14,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 import redis.clients.jedis.Jedis;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Log
 public class demo {
 
     @Test
@@ -69,6 +69,21 @@ public class demo {
         Gson gson = new Gson();
         CartRedisListDto cartRedisListDto = gson.fromJson(json, CartRedisListDto.class);
         System.out.println(cartRedisListDto.toString());
+    }
+
+    @Test
+    public void word(){
+        List<CartRedisListDto> cartRedisListDtoList = Lists.newArrayList();
+        Gson gson = new Gson();
+        Jedis jedis = new Jedis();
+        jedis.select(RedisIndex.CART.getCode());//0用来存购物车信息
+        Set redisAllKey = jedis.keys("*");
+        Iterator it = redisAllKey.iterator();
+        //遍历redis中所有的库
+        while (it.hasNext()){
+            cartRedisListDtoList.add(gson.fromJson(jedis.get(it.next().toString()), CartRedisListDto.class));
+        }
+        System.out.println(cartRedisListDtoList.toString());
     }
 
 
