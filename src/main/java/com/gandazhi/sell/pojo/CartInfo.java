@@ -5,9 +5,9 @@ import java.util.Date;
 public class CartInfo {
     private Integer id;
 
-    private Integer openid;
+    private String openid;
 
-    private Integer productId;
+    private String productId;
 
     private Integer quantity;
 
@@ -15,7 +15,7 @@ public class CartInfo {
 
     private Date updateTime;
 
-    public CartInfo(Integer id, Integer openid, Integer productId, Integer quantity, Date createTime, Date updateTime) {
+    public CartInfo(Integer id, String openid, String productId, Integer quantity, Date createTime, Date updateTime) {
         this.id = id;
         this.openid = openid;
         this.productId = productId;
@@ -36,20 +36,20 @@ public class CartInfo {
         this.id = id;
     }
 
-    public Integer getOpenid() {
+    public String getOpenid() {
         return openid;
     }
 
-    public void setOpenid(Integer openid) {
-        this.openid = openid;
+    public void setOpenid(String openid) {
+        this.openid = openid == null ? null : openid.trim();
     }
 
-    public Integer getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
+    public void setProductId(String productId) {
+        this.productId = productId == null ? null : productId.trim();
     }
 
     public Integer getQuantity() {
