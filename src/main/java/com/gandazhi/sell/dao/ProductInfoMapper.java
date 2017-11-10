@@ -18,4 +18,6 @@ public interface ProductInfoMapper {
     int updateByPrimaryKey(ProductInfo record);
 
     List<ProductInfo> selectUpAll();
+
+    int selectCountByProductId(String productId);
 }

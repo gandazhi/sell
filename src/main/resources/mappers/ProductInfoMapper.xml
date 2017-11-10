@@ -158,4 +158,10 @@
     FROM product_info
     WHERE product_status = 0
   </select>
+
+  <select id="selectCountByProductId" resultType="int" parameterType="string">
+    SELECT COUNT(1)
+    FROM product_info
+    WHERE product_id = #{productId}
+  </select>
 </mapper>
