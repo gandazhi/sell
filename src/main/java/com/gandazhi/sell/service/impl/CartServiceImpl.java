@@ -1,5 +1,6 @@
 package com.gandazhi.sell.service.impl;
 
+import com.gandazhi.sell.common.CartRedis;
 import com.gandazhi.sell.common.RedisIndex;
 import com.gandazhi.sell.common.ServiceResponse;
 import com.gandazhi.sell.dao.CartInfoMapper;
@@ -14,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import redis.clients.jedis.Jedis;
 
 import java.util.*;
@@ -41,7 +43,7 @@ public class CartServiceImpl implements ICartService {
         }
 
         //把购物车信息存到redis中
-        //1.生成redis hset的key，和当前系统时间
+        //1.生成redis set的key，和当前系统时间
         final String KEY = openId + "_cart";
         //2.生成存redis需要的cartRedisDtoList
         CartRedisDto cartRedisDto = new CartRedisDto();
@@ -55,13 +57,126 @@ public class CartServiceImpl implements ICartService {
         Jedis jedis = new Jedis();
         operatingRedis(jedis, KEY, cartRedisDto);
 
-        // TODO 设置定时任务，定时同步redis中的数据到MySQL中
         return ServiceResponse.createBySuccessMesage("添加购物车信息到redis中成功");
     }
 
     @Override
-    public ServiceResponse delCart(Integer cartId) {
-        return null;
+    public ServiceResponse delCart(String productId, Integer quantity, String openId) {
+        /*
+        判断productId是否在product_info中有，有继续，没有返回没有productId这个商品
+        判断quantity是否为负数，如果是正数，就返回参数错误，quantity不能为正数
+        先删除redis中的数据
+        如果redis中有数量，就删除，如果redis中的数据删了还不够，就继续删MySQL中的数据，如果MySQL中没有，就返回参数错误
+        如果redis中没有数量，就直接向MySQL中删除，MySQL中有，但如果没MySQL不够删，就返回参数错误，MySQL中没有就返回参数错误
+         */
+        if (quantity >= 0) {
+            return ServiceResponse.createByErrorMessage("参数错误，quantity不能≥0");
+        }
+        int resultCount = productInfoMapper.selectCountByProductId(productId);
+        if (resultCount <= 0) {
+            return ServiceResponse.createByErrorMessage("参数错误，没有找到id为" + productId + "的商品");
+        }
+        Jedis jedis = new Jedis();
+        final String KEY = openId + "_cart";
+        Gson gson = new Gson();
+        String cartRedisJson = jedis.get(KEY);
+        if (cartRedisJson == null) {
+            //redis中没有这个数据，向MySQL中减少
+            Integer reduceForMysqlQuantity = cartInfoMapper.selectQuantityForProductIdAndOpenId(productId, openId);
+            if (Math.abs(quantity) > reduceForMysqlQuantity) {
+                return ServiceResponse.createByErrorMessage("参数错误，购物车中的数量比要减少的数量更少");
+            }
+            if (Math.abs(quantity) == reduceForMysqlQuantity) {
+                //直接删除MySQL中的这条记录
+                resultCount = cartInfoMapper.deleteByProductIdAndOpenId(productId, openId);
+                if (resultCount < 0) {
+                    return ServiceResponse.createByErrorMessage("MySQL数量减少失败");
+                }
+            }
+            if (Math.abs(quantity) < reduceForMysqlQuantity) {
+                //减少MySQL中的quantity
+                //更新MySQL中的数量
+                Integer updateQuantity = reduceForMysqlQuantity + quantity;
+                resultCount = cartInfoMapper.updateQuantityByProductIdAndOpenId(productId, openId, updateQuantity);
+                if (resultCount <= 0) {
+                    return ServiceResponse.createByErrorMessage("MySQL更新数量失败");
+                }
+            }
+        } else {
+            //redis中有这个数据，判断redis中的quantity的绝对值是不是大于传来的quantity的绝对值
+            CartRedisListDto newCartRedListDto = new CartRedisListDto();
+            List<CartRedisDto> cartRedisDtoList = Lists.newArrayList();
+            CartRedisListDto cartRedisListDto = gson.fromJson(cartRedisJson, CartRedisListDto.class);
+            boolean isAllReduceForRedis = true;
+            for (CartRedisDto cartRedisDto : cartRedisListDto.getCartRedisDtos()) {
+                if (cartRedisDto.getProductId().equals(productId)) {
+                    if (cartRedisDto.getQuantity() >= Math.abs(quantity)) {
+                        //redis中的数量大于或等于传来的quantity的绝对值，直接从redis中的减
+                        isAllReduceForRedis = false;
+                        cartRedisDto.setQuantity(cartRedisDto.getQuantity() + quantity);
+                    } else {
+                        //redis中的数量小于传来的quantity的绝对值
+                        jedis.del(KEY);
+                        Integer reduceForMysqlQuantity = Math.abs(quantity) - cartRedisDto.getQuantity();
+                        Integer mysqlQuantity = cartInfoMapper.selectQuantityForProductIdAndOpenId(productId, openId);
+                        if (reduceForMysqlQuantity > mysqlQuantity) {
+                            return ServiceResponse.createByErrorMessage("参数错误，购物车中的数量比要减少的数量更少");
+                        }
+                        if (reduceForMysqlQuantity == mysqlQuantity) {
+                            //直接删除MySQL中的这条记录
+                            resultCount = cartInfoMapper.deleteByProductIdAndOpenId(productId, openId);
+                            if (resultCount < 0) {
+                                return ServiceResponse.createByErrorMessage("MySQL数量减少失败");
+                            }
+                        } else {
+                            //更新MySQL中的数量
+                            Integer updateQuantity = mysqlQuantity - reduceForMysqlQuantity;
+                            resultCount = cartInfoMapper.updateQuantityByProductIdAndOpenId(productId, openId, updateQuantity);
+                            if (resultCount <= 0) {
+                                return ServiceResponse.createByErrorMessage("MySQL更新数量失败");
+                            }
+                        }
+
+                    }
+                }
+                cartRedisDtoList.add(cartRedisDto);
+            }
+            if (!isAllReduceForRedis) {
+                //组装CartRedisListDto
+                newCartRedListDto.setCartRedisDtos(cartRedisDtoList);
+                //把quantity为0的从redis中删掉
+                for (int i = 0; i <= newCartRedListDto.getCartRedisDtos().size(); i++) {
+                    if (newCartRedListDto.getCartRedisDtos().get(i).getQuantity() == 0) {
+                        newCartRedListDto.getCartRedisDtos().remove(i);
+                    }
+                }
+                if (CollectionUtils.isEmpty(newCartRedListDto.getCartRedisDtos())) {
+                    jedis.del(KEY);
+                } else {
+                    jedis.set(KEY, gson.toJson(newCartRedListDto));
+                }
+            }
+        }
+        CartInfoVo cartInfoVo = new CartInfoVo();
+        List<CartVo> cartVoList = cartInfoMapper.selectCartVoByOpenId(openId);
+        Integer mysqlCount = new Integer("0");
+        //遍历取出MySQL中的数量
+        for (CartVo cartVo : cartVoList) {
+            mysqlCount = mysqlCount + cartVo.getQuantity();
+        }
+        String nowCartRedisJson = jedis.get(KEY);
+        Integer redisCount = new Integer("0");
+        if (nowCartRedisJson != null) {
+            CartRedisListDto nowCartRedisListDto = gson.fromJson(nowCartRedisJson, CartRedisListDto.class);
+            //遍历取出数量
+            for (CartRedisDto cartRedisDto : nowCartRedisListDto.getCartRedisDtos()) {
+                redisCount = redisCount + cartRedisDto.getQuantity();
+            }
+        }
+
+        cartInfoVo.setCartVoList(cartVoList);
+        cartInfoVo.setCartQuantity(mysqlCount + redisCount);
+        return ServiceResponse.createBySuccess(cartInfoVo);
     }
 
     /**

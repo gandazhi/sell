@@ -28,4 +28,9 @@ public class BuyerCartController {
         return iCartService.getCart("123456");
     }
 
+    @PostMapping("/deleteCart")
+    public ServiceResponse deleteCart(String productId, Integer quantity){
+        return iCartService.delCart(productId, quantity, "123456");
+    }
+
 }

@@ -50,7 +50,6 @@ public class RedisToMysql {
             cartInfo.setUpdateTime(cartRedisDto.getUpdateTime());
             int resultCount = cartInfoMapper.insert(cartInfo);
             if (resultCount <= 0) {
-                // TODO 主动抛出异常,不清空redis
                 throw new RedisToMysqlException("存入MySQL时发生错误");
 
             } else {
