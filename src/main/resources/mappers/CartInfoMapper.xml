@@ -120,4 +120,30 @@
     FROM cart_info
     WHERE openid = #{openId}
   </select>
+
+  <select id="selectCartVoByProductId" parameterType="string" resultMap="CartVoMap">
+    SELECT <include refid="Cart_Vo"/>
+    FROM cart_info
+    WHERE product_id = #{productId}
+  </select>
+
+  <select id="selectQuantityForProductIdAndOpenId" parameterType="java.util.Map" resultType="int">
+    SELECT quantity
+    FROM cart_info
+    WHERE openid = #{openId}
+    and product_id = #{productId}
+  </select>
+
+  <delete id="deleteByProductIdAndOpenId" parameterType="java.util.Map">
+    DELETE FROM cart_info
+    WHERE product_id = #{productId}
+    and openid = #{openId}
+  </delete>
+
+  <update id="updateQuantityByProductIdAndOpenId">
+    UPDATE cart_info
+    SET quantity = #{updateQuantity}
+    where openid = #{openId}
+    and product_id = #{productId}
+  </update>
 </mapper>

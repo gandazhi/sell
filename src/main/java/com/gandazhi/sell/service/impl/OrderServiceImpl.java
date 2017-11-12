@@ -74,7 +74,7 @@ public class OrderServiceImpl implements IOrderService {
             return ServiceResponse.createByErrorMessage("写入order_master表时错误");
         }
 
-        // TODO 将数据写入order_detail表中
+        //将数据写入order_detail表中
         for (OrderDetail orderDetail : orderDetailList){
             resultCount = orderDetailMapper.insert(orderDetail);
             if (resultCount <= 0){
