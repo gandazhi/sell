@@ -58,7 +58,7 @@ public class RedisToMysql {
             }
         }
         if (!isAllMove) {
-            jedis.flushAll();//清空redis中所有的数据
+            jedis.flushAll();//清空redis中所有的key
             log.info("redis存入MySQL中成功");
         }
     }

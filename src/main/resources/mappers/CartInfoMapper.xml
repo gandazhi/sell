@@ -11,8 +11,17 @@
       <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
   </resultMap>
+  <resultMap id="CartVoMap" type="com.gandazhi.sell.vo.CartVo">
+    <constructor>
+      <arg column="product_id" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="quantity" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    </constructor>
+  </resultMap>
   <sql id="Base_Column_List">
     id, openid, product_id, quantity, create_time, update_time
+  </sql>
+  <sql id="Cart_Vo">
+    product_id, quantity
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -105,4 +114,10 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectCartVoByOpenId" parameterType="string" resultMap="CartVoMap">
+    SELECT <include refid="Cart_Vo"/>
+    FROM cart_info
+    WHERE openid = #{openId}
+  </select>
 </mapper>
