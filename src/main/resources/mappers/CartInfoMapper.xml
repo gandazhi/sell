@@ -142,7 +142,8 @@
 
   <update id="updateQuantityByProductIdAndOpenId">
     UPDATE cart_info
-    SET quantity = #{updateQuantity}
+    SET quantity = #{updateQuantity},
+    update_time = now()
     where openid = #{openId}
     and product_id = #{productId}
   </update>
