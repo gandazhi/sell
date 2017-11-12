@@ -115,6 +115,7 @@ public class CartServiceImpl implements ICartService {
                         isAllReduceForRedis = false;
                         cartRedisDto.setQuantity(cartRedisDto.getQuantity() + quantity);
                         cartRedisDto.setUpdateTime(DateUtil.getCurrentTime());
+
                     } else {
                         //redis中的数量小于传来的quantity的绝对值
                         jedis.del(KEY);
