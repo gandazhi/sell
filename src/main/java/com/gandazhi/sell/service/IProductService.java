@@ -4,5 +4,5 @@ import com.gandazhi.sell.common.ServiceResponse;
 
 public interface IProductService {
 
-    ServiceResponse getProductList();
+    ServiceResponse getProductList(int pageNum, int pageSize);
 }

@@ -16,15 +16,15 @@ public class OrderMaster {
 
     private BigDecimal orderAmount;
 
-    private Byte orderStatus;
+    private Integer orderStatus;
 
-    private Byte payStatus;
+    private Integer payStatus;
 
     private Date createTime;
 
     private Date updateTime;
 
-    public OrderMaster(String orderId, String buyerName, String buyerPhone, String buyerAddress, String buyerOpenid, BigDecimal orderAmount, Byte orderStatus, Byte payStatus, Date createTime, Date updateTime) {
+    public OrderMaster(String orderId, String buyerName, String buyerPhone, String buyerAddress, String buyerOpenid, BigDecimal orderAmount, Integer orderStatus, Integer payStatus, Date createTime, Date updateTime) {
         this.orderId = orderId;
         this.buyerName = buyerName;
         this.buyerPhone = buyerPhone;
@@ -89,19 +89,19 @@ public class OrderMaster {
         this.orderAmount = orderAmount;
     }
 
-    public Byte getOrderStatus() {
+    public Integer getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(Byte orderStatus) {
+    public void setOrderStatus(Integer orderStatus) {
         this.orderStatus = orderStatus;
     }
 
-    public Byte getPayStatus() {
+    public Integer getPayStatus() {
         return payStatus;
     }
 
-    public void setPayStatus(Byte payStatus) {
+    public void setPayStatus(Integer payStatus) {
         this.payStatus = payStatus;
     }
 

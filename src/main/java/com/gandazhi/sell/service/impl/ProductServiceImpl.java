@@ -9,6 +9,8 @@ import com.gandazhi.sell.pojo.ProductInfo;
 import com.gandazhi.sell.service.IProductService;
 import com.gandazhi.sell.vo.ProductInfoVo;
 import com.gandazhi.sell.vo.ProductVo;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,14 @@ public class ProductServiceImpl implements IProductService {
     private ProductCategoryMapper productCategoryMapper;
 
     @Override
-    public ServiceResponse getProductList() {
+    public ServiceResponse getProductList(int pageNum, int pageSize) {
         /**
          * 1.查询所有上架商品
          * 2.查询categoryType
          * 3.组装productVoList
          */
+
+        PageHelper.startPage(pageNum, pageSize);
 
         List<ProductInfo> productInfoList = productInfoMapper.selectUpAll();
         if (CollectionUtils.isEmpty(productInfoList)) {
@@ -49,8 +53,9 @@ public class ProductServiceImpl implements IProductService {
 
         List<ProductInfoVo> productInfoVoList = assembleProductInfoVoList(productInfoList);
         List<ProductVo> productVoList = assembleProductVoList(productCategoryList, productInfoVoList);
-
-        return ServiceResponse.createBySuccess(productVoList);
+        PageInfo pageResult = new PageInfo(productInfoList);
+        pageResult.setList(productVoList);
+        return ServiceResponse.createBySuccess(pageResult);
     }
 
     //组装productVoList
