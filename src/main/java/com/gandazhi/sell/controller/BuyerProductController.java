@@ -1,6 +1,7 @@
 package com.gandazhi.sell.controller;
 
 import com.gandazhi.sell.common.ServiceResponse;
+import com.gandazhi.sell.customException.WriteDbException;
 import com.gandazhi.sell.dto.OrderDetailDto;
 import com.gandazhi.sell.dto.OrderMasterDto;
 import com.gandazhi.sell.pojo.OrderMaster;
@@ -34,11 +35,10 @@ public class BuyerProductController {
     }
 
     @PostMapping("/createOrder")
-    public ServiceResponse createOrder(OrderMasterDto orderMasterDto, OrderDetailDto orderDetailDto){
+    public ServiceResponse createOrder(OrderMasterDto orderMasterDto) throws WriteDbException {
         if (orderMasterDto.getBuyerOpenid().equals("")){
             return ServiceResponse.createByErrorMessage("用户未登录，需登录后在下单");
         }
-//        return ServiceResponse.createBySuccess(orderDetailDto);
-        return null;
+        return iOrderService.createOrder(orderMasterDto);
     }
 }

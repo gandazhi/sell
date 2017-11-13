@@ -1,8 +1,8 @@
 package com.gandazhi.sell.vo;
 
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
+@Data
 public class OrderVo {
 
     private String orderId;
