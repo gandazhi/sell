@@ -1,12 +1,18 @@
 package com.gandazhi.sell.gson;
 
+import com.gandazhi.sell.customException.WriteDbException;
+import com.gandazhi.sell.dao.CartInfoMapper;
 import com.gandazhi.sell.dto.CartRedisDto;
+import com.gandazhi.sell.pojo.CartInfo;
+import com.gandazhi.sell.util.DateUtil;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
 
 import java.text.ParseException;
@@ -20,6 +26,9 @@ import java.util.Locale;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class gsonDemo {
+
+    @Autowired
+    private CartInfoMapper cartInfoMapper;
 
     @Test
     public void  demo(){
@@ -60,5 +69,22 @@ public class gsonDemo {
 
 
         System.out.println(date);
+    }
+
+    @Test
+    @Transactional
+    public void testA(){
+        CartInfo cartInfo = new CartInfo();
+        cartInfo.setUpdateTime(DateUtil.getCurrentTime());
+        cartInfo.setUpdateTime(DateUtil.getCurrentTime());
+        cartInfo.setProductId("11111");
+        cartInfo.setQuantity(2);
+        cartInfo.setOpenid("123456");
+        cartInfoMapper.insertSelective(cartInfo);
+        try {
+            throw new WriteDbException("手动抛出异常");
+        } catch (WriteDbException e) {
+            System.out.println("抛异常了.....");
+        }
     }
 }

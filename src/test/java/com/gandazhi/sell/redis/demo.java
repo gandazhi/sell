@@ -93,5 +93,12 @@ public class demo {
         System.out.println(Math.abs(-1));
     }
 
+    @Test
+    public void delJedis(){
+        Jedis jedis = new Jedis();
+        jedis.del("1234");
+        jedis.close();
+    }
+
 
 }

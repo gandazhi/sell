@@ -29,4 +29,6 @@ public interface CartInfoMapper {
 
     int updateQuantityByProductIdAndOpenId(@Param(value = "productId") String productId, @Param(value = "openId") String openId,
                                           @Param(value = "updateQuantity") Integer updateQuantity);
+
+    int deleteByOpenId(String openId);
 }

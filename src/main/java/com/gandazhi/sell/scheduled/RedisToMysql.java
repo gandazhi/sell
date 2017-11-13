@@ -12,6 +12,8 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import redis.clients.jedis.Jedis;
 
 import java.util.Iterator;
@@ -41,24 +43,28 @@ public class RedisToMysql {
         //取出cartRedisDtoList
         boolean isAllMove = false;
         List<CartRedisDto> cartRedisDtoList = cartRedisListDtoList.get(0).getCartRedisDtos();
-        for (CartRedisDto cartRedisDto : cartRedisDtoList) {
-            CartInfo cartInfo = new CartInfo();
-            cartInfo.setOpenid(cartRedisDto.getOpenId());
-            cartInfo.setProductId(cartRedisDto.getProductId());
-            cartInfo.setQuantity(cartRedisDto.getQuantity());
-            cartInfo.setCreateTime(cartRedisDto.getCreateTime());
-            cartInfo.setUpdateTime(cartRedisDto.getUpdateTime());
-            int resultCount = cartInfoMapper.insert(cartInfo);
-            if (resultCount <= 0) {
-                throw new RedisToMysqlException("存入MySQL时发生错误");
+        if (!CollectionUtils.isEmpty(cartRedisDtoList)) {
+            for (CartRedisDto cartRedisDto : cartRedisDtoList) {
+                CartInfo cartInfo = new CartInfo();
+                cartInfo.setOpenid(cartRedisDto.getOpenId());
+                cartInfo.setProductId(cartRedisDto.getProductId());
+                cartInfo.setQuantity(cartRedisDto.getQuantity());
+                cartInfo.setCreateTime(cartRedisDto.getCreateTime());
+                cartInfo.setUpdateTime(cartRedisDto.getUpdateTime());
+                int resultCount = cartInfoMapper.insert(cartInfo);
+                if (resultCount <= 0) {
+                    throw new RedisToMysqlException("存入MySQL时发生错误");
 
-            } else {
-                isAllMove = true;
+                } else {
+                    isAllMove = true;
+                }
             }
-        }
-        if (!isAllMove) {
-            jedis.flushAll();//清空redis中所有的key
-            log.info("redis存入MySQL中成功");
+            if (!isAllMove) {
+                jedis.flushAll();//清空redis中所有的key
+                log.info("redis存入MySQL中成功");
+            }
+        }else {
+            log.info("redis中没有数据");
         }
     }
 }

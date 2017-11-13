@@ -147,4 +147,9 @@
     where openid = #{openId}
     and product_id = #{productId}
   </update>
+
+  <delete id="deleteByOpenId" parameterType="string">
+    DELETE FROM cart_info
+    WHERE openid = #{openId}
+  </delete>
 </mapper>

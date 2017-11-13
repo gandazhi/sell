@@ -1,6 +1,5 @@
 package com.gandazhi.sell.service.impl;
 
-import com.gandazhi.sell.common.CartRedis;
 import com.gandazhi.sell.common.RedisIndex;
 import com.gandazhi.sell.common.ServiceResponse;
 import com.gandazhi.sell.dao.CartInfoMapper;
