@@ -105,4 +105,10 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <select id="selectByOpenId" parameterType="string" resultType="int">
+    SELECT COUNT(1)
+    FROM seller_info
+    WHERE openid = #{openId}
+  </select>
 </mapper>
