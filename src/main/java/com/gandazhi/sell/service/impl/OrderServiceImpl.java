@@ -14,9 +14,12 @@ import com.gandazhi.sell.pojo.OrderMaster;
 import com.gandazhi.sell.pojo.ProductInfo;
 import com.gandazhi.sell.service.IOrderService;
 import com.gandazhi.sell.util.BigDecimalUtil;
-import com.gandazhi.sell.util.ObjUtil;
+import com.gandazhi.sell.util.EnumUtil;
 import com.gandazhi.sell.vo.CartVo;
-import com.gandazhi.sell.vo.OrderVo;
+import com.gandazhi.sell.vo.BuyerOrderVo;
+import com.gandazhi.sell.vo.SellerOrderVo;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import lombok.extern.java.Log;
@@ -120,9 +123,9 @@ public class OrderServiceImpl implements IOrderService {
         if (!isSuccess){
             return ServiceResponse.createByErrorMessage("数据库写入order时错误");
         }
-        OrderVo orderVo = new OrderVo();
-        orderVo.setOrderId(orderId);
-        return ServiceResponse.createBySuccess(orderVo);
+        BuyerOrderVo buyerOrderVo = new BuyerOrderVo();
+        buyerOrderVo.setOrderId(orderId);
+        return ServiceResponse.createBySuccess(buyerOrderVo);
     }
 
     //从MySQL中获得购物车信息
@@ -225,5 +228,22 @@ public class OrderServiceImpl implements IOrderService {
             }
         }
         return isSuccess;
+    }
+
+    //商家后台获取全部订单
+    @Override
+    public PageInfo getOrderList(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<SellerOrderVo> sellerOrderVoList = Lists.newArrayList();
+
+        List<OrderMaster> orderMasterList = orderMasterMapper.selectAll();
+        for (OrderMaster orderMaster : orderMasterList){
+            SellerOrderVo sellerOrderVo = new SellerOrderVo();
+            BeanUtils.copyProperties(orderMaster, sellerOrderVo);
+            sellerOrderVoList.add(sellerOrderVo);
+        }
+        PageInfo pageInfo = new PageInfo(orderMasterList);
+        pageInfo.setList(sellerOrderVoList);
+        return pageInfo;
     }
 }

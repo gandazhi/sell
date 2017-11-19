@@ -52,9 +52,11 @@ public class WeChartController {
         //获取到openId检查数据库中是否有这条数据，有就把用户信息存session，没有就跳转到用户完善页
         ServiceResponse response = iUserService.checkHasUser(openId);
         if (response.isSuccess()) {
+            //是注册过了的，之后写跳主页
             return "redirect:" + returnUrl + "?openid=" + openId;
         }else {
-            return "你还没有注册的";
+            //之后写调register页面
+            return "redirect:" + "http://www.koudaimiao.com/Shop/personcenter/newpersoncenter";
         }
 //        return "redirect:" + returnUrl + "?openid=" + openId;
     }

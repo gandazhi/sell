@@ -3,7 +3,7 @@ package com.gandazhi.sell.vo;
 import lombok.Data;
 
 @Data
-public class OrderVo {
+public class BuyerOrderVo {
 
     private String orderId;
 }
