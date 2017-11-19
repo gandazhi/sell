@@ -40,6 +40,31 @@
                 </tbody>
             </table>
         </div>
+        <div class="col-md-12 column">
+            <ul class="pagination pull-right">
+            <#if pageInfo.hasPreviousPage>
+                <li>
+                    <a href="/seller/order/list?pageNum=${pageInfo.prePage}&pageSize=${pageInfo.pageSize}">上一页</a>
+                </li>
+            </#if>
+            <#list pageInfo.navigatepageNums as page>
+                <#if pageInfo.pageNum == page>
+                    <li class="disabled">
+                        <a>${page}</a>
+                    </li>
+                <#else >
+                    <li>
+                        <a href="/seller/order/list?pageNum=${page}&pageSize=${pageInfo.pageSize}">${page}</a>
+                    </li>
+                </#if>
+            </#list>
+            <#if pageInfo.hasNextPage>
+                <li>
+                    <a href="/seller/order/list?pageNum=${pageInfo.nextPage}&pageSize=${pageInfo.pageSize}">下一页</a>
+                </li>
+            </#if>
+            </ul>
+        </div>
     </div>
 </div>
 </body>
