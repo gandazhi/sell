@@ -15,5 +15,9 @@ public interface IOrderService {
 
     PageInfo getOrderList(Integer pageNum, Integer pageSize);
 
+    boolean cancelOrder(String orderId);
+
+    ServiceResponse getOrderDetail(String orderId);
+
 
 }

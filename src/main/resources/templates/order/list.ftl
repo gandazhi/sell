@@ -19,7 +19,7 @@
                     <th>订单状态</th>
                     <th>支付状态</th>
                     <th>创建时间</th>
-                    <th>操作</th>
+                    <th colspan="2">操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -33,8 +33,10 @@
                     <td>${list.getOrderStatusEnum(list.orderStatus).msg}</td>
                     <td>${list.getPayStatusEnum(list.payStatus).msg}</td>
                     <td>${list.createTime?string('yyyy-MM-dd hh:mm:ss')}</td>
-                    <td>详情</td>
-                    <td>取消</td>
+                    <td><a href="/seller/order/detail?orderId=${list.orderId}">详情</a></td>
+                    <#if list.orderStatus == 0>
+                        <td><a href="/seller/order/cancel?orderId=${list.orderId}">取消</a></td>
+                    </#if>
                 </tr>
                 </#list>
                 </tbody>
