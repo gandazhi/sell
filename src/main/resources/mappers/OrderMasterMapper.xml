@@ -9,8 +9,8 @@
       <arg column="buyer_address" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="buyer_openid" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="order_amount" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
-      <arg column="order_status" javaType="java.lang.Byte" jdbcType="TINYINT" />
-      <arg column="pay_status" javaType="java.lang.Byte" jdbcType="TINYINT" />
+      <arg column="order_status" javaType="java.lang.Integer" jdbcType="TINYINT" />
+      <arg column="pay_status" javaType="java.lang.Integer" jdbcType="TINYINT" />
       <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
@@ -152,4 +152,9 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where order_id = #{orderId,jdbcType=VARCHAR}
   </update>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM order_master
+  </select>
 </mapper>

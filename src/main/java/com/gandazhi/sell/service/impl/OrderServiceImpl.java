@@ -14,9 +14,14 @@ import com.gandazhi.sell.pojo.OrderMaster;
 import com.gandazhi.sell.pojo.ProductInfo;
 import com.gandazhi.sell.service.IOrderService;
 import com.gandazhi.sell.util.BigDecimalUtil;
+import com.gandazhi.sell.util.EnumUtil;
 import com.gandazhi.sell.util.ObjUtil;
 import com.gandazhi.sell.vo.CartVo;
-import com.gandazhi.sell.vo.OrderVo;
+import com.gandazhi.sell.vo.BuyerOrderVo;
+import com.gandazhi.sell.vo.OrderDetailVo;
+import com.gandazhi.sell.vo.SellerOrderVo;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import lombok.extern.java.Log;
@@ -70,7 +75,7 @@ public class OrderServiceImpl implements IOrderService {
         if (redisCartJson == null) {
             //redis中没有数据，从MySQL中查找数据
             productInfoDtoList = getMySQLCart(orderMasterDto.getBuyerOpenid());
-            if (CollectionUtils.isEmpty(productInfoDtoList)){
+            if (CollectionUtils.isEmpty(productInfoDtoList)) {
                 //mysql中也没有数据
                 return ServiceResponse.createByErrorMessage("redis和MySQL中都没有数据");
             }
@@ -96,7 +101,7 @@ public class OrderServiceImpl implements IOrderService {
 
             List<ProductInfoDto> mysqlProductInfoDtoList = getMySQLCart(orderMasterDto.getBuyerOpenid());
             //计算MySQL中的总和
-            for (ProductInfoDto mysqlProductInfoDto : mysqlProductInfoDtoList){
+            for (ProductInfoDto mysqlProductInfoDto : mysqlProductInfoDtoList) {
                 ProductInfo productInfo = productInfoMapper.selectByPrimaryKey(mysqlProductInfoDto.getProductId());
                 orderAmount = BigDecimalUtil.mul(mysqlProductInfoDto.getProductQuantity().doubleValue(), productInfo.getProductPrice().doubleValue())
                         .add(orderAmount);
@@ -107,7 +112,7 @@ public class OrderServiceImpl implements IOrderService {
             //整合productInfoDtoList中的数量
             for (int i = 0; i < productInfoDtoList.size(); i++) {
                 for (int j = i + 1; j < productInfoDtoList.size(); j++) {
-                    if (productInfoDtoList.get(i).getProductId().equals(productInfoDtoList.get(j).getProductId())){
+                    if (productInfoDtoList.get(i).getProductId().equals(productInfoDtoList.get(j).getProductId())) {
                         //整合数量
                         productInfoDtoList.get(i).setProductQuantity(productInfoDtoList.get(i).getProductQuantity() + productInfoDtoList.get(j).getProductQuantity());
                         productInfoDtoList.remove(j);
@@ -117,12 +122,12 @@ public class OrderServiceImpl implements IOrderService {
         }
         //写入数据库
         boolean isSuccess = writeOrder(orderAmount, orderId, orderMasterDto, productInfoDtoList);
-        if (!isSuccess){
+        if (!isSuccess) {
             return ServiceResponse.createByErrorMessage("数据库写入order时错误");
         }
-        OrderVo orderVo = new OrderVo();
-        orderVo.setOrderId(orderId);
-        return ServiceResponse.createBySuccess(orderVo);
+        BuyerOrderVo buyerOrderVo = new BuyerOrderVo();
+        buyerOrderVo.setOrderId(orderId);
+        return ServiceResponse.createBySuccess(buyerOrderVo);
     }
 
     //从MySQL中获得购物车信息
@@ -180,7 +185,7 @@ public class OrderServiceImpl implements IOrderService {
             ProductInfo productInfo = productInfoMapper.selectByPrimaryKey(productInfoDto.getProductId());
             productInfo.setProductStock(productInfo.getProductStock() - productInfoDto.getProductQuantity());
             resultCount = productInfoMapper.updateByPrimaryKeySelective(productInfo);
-            if (resultCount <= 0){
+            if (resultCount <= 0) {
                 try {
                     throw new WriteDbException("更新product_info表的库存时错误");
                 } catch (WriteDbException e) {
@@ -205,7 +210,7 @@ public class OrderServiceImpl implements IOrderService {
                 }
             }
         }
-        if (isSuccess){
+        if (isSuccess) {
             //清空redis和MySQL中购物车的信息
             Jedis jedis = new Jedis();
             final String KEY = orderMasterDto.getBuyerOpenid() + "_cart";
@@ -213,17 +218,95 @@ public class OrderServiceImpl implements IOrderService {
             jedis.close();
             //删除MySQL中的数据
             resultCount = cartInfoMapper.deleteByOpenId(orderMasterDto.getBuyerOpenid());
-            if (resultCount < 0){
+            if (resultCount < 0) {
                 try {
                     throw new WriteDbException("删除mysql中的购物车信息失败");
                 } catch (WriteDbException e) {
                     isSuccess = false;
                     log.warning("删除mysql中的购物车信息失败");
                 }
-            }else if (resultCount == 0){
+            } else if (resultCount == 0) {
                 log.info("MySQL数据库中没有数据");
             }
         }
         return isSuccess;
+    }
+
+    //商家后台获取全部订单
+    @Override
+    public PageInfo getOrderList(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<SellerOrderVo> sellerOrderVoList = Lists.newArrayList();
+
+        List<OrderMaster> orderMasterList = orderMasterMapper.selectAll();
+        for (OrderMaster orderMaster : orderMasterList) {
+            SellerOrderVo sellerOrderVo = new SellerOrderVo();
+            BeanUtils.copyProperties(orderMaster, sellerOrderVo);
+            sellerOrderVoList.add(sellerOrderVo);
+        }
+        PageInfo pageInfo = new PageInfo(orderMasterList);
+        pageInfo.setList(sellerOrderVoList);
+        return pageInfo;
+    }
+
+    //商家后台取消订单
+    @Override
+    public boolean cancelOrder(String orderId) {
+        Boolean isSuccess = false;
+        OrderMaster orderMaster = orderMasterMapper.selectByPrimaryKey(orderId);
+        if (orderMaster == null) {
+            return isSuccess;
+        } else {
+            //把orderStatus改为已取消
+            orderMaster.setOrderStatus(OrderStatus.CANCEL.getCode());
+            int resultCount = orderMasterMapper.updateByPrimaryKey(orderMaster);
+            if (resultCount <= 0) {
+                return isSuccess;
+            } else {
+                isSuccess = true;
+            }
+        }
+        return isSuccess;
+    }
+
+    /**
+     * 商家后台查看订单详情
+     * @param orderId 待查看的订单id
+     * @return 返回的oderDetailVo
+     */
+    @Override
+    public ServiceResponse getOrderDetail(String orderId) {
+        if (orderId == null || orderId.equals("")) {
+            return ServiceResponse.createByErrorMessage("orderId不能为空");
+        }
+        List<OrderDetail> orderDetailList = orderDetailMapper.selectByOrderId(orderId);
+        if (CollectionUtils.isEmpty(orderDetailList)) {
+            return ServiceResponse.createByErrorMessage("没有找到" + orderId + "这个订单");
+        }
+        //组装返回orderDetailVo对象，返回
+        OrderDetailVo orderDetailVo = new OrderDetailVo();
+        BigDecimal orderAmount = new BigDecimal(BigInteger.ZERO);
+        BigDecimal productAmount = new BigDecimal(BigInteger.ZERO);
+        for (OrderDetail orderDetail : orderDetailList){
+            List<ProductInfoListDto> productInfoListDtoList = Lists.newArrayList();
+            ProductInfoListDto productInfoListDto = new ProductInfoListDto();
+
+            orderDetailVo.setOrderId(orderDetail.getOrderId());
+            productInfoListDto.setProductId(orderDetail.getProductId());
+            productInfoListDto.setProductName(orderDetail.getProductName());
+            productInfoListDto.setProductPrice(orderDetail.getProductPrice());
+            productInfoListDto.setProductQuantity(orderDetail.getProductQuantity());
+            productAmount = BigDecimalUtil.mul(orderDetail.getProductQuantity(), orderDetail.getProductPrice().doubleValue());
+            productInfoListDto.setProductAmount(productAmount);
+            productInfoListDtoList.add(productInfoListDto);
+            orderDetailVo.setProductInfoListDtoList(productInfoListDtoList);
+            //计算orderAmount
+            orderAmount = BigDecimalUtil.add(orderAmount.doubleValue(), productAmount.doubleValue());
+
+        }
+        OrderMaster orderMaster = orderMasterMapper.selectByPrimaryKey(orderId);
+        orderDetailVo.setOrderStatus(orderMaster.getOrderStatus());
+        orderDetailVo.setOrderAmount(orderAmount);
+        return ServiceResponse.createBySuccess(orderDetailVo);
     }
 }

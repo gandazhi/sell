@@ -14,10 +14,16 @@ mybatis:
     typeAliasesPackage: com.gandazhi.sell.pojo
     # 配置mapper的扫描，找到所有的mapper.xml映射文件
     mapperLocations: classpath*:mappers/*Mapper.xml
+
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+
 wechart:
   mpAppId: wx3551c1898d99b597
   mpAppSecret: e9e5eee49da497e37a83133ba62ca99a
-
 
 
 

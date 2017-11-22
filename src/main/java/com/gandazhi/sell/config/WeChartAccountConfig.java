@@ -11,4 +11,7 @@ public class WeChartAccountConfig {
 
     private String mpAppId;
     private String mpAppSecret;
+    private String mchKey;
+    private String mchId;
+
 }

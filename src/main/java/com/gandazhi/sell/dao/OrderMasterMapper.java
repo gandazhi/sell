@@ -2,6 +2,8 @@ package com.gandazhi.sell.dao;
 
 import com.gandazhi.sell.pojo.OrderMaster;
 
+import java.util.List;
+
 public interface OrderMasterMapper {
     int deleteByPrimaryKey(String orderId);
 
@@ -14,4 +16,6 @@ public interface OrderMasterMapper {
     int updateByPrimaryKeySelective(OrderMaster record);
 
     int updateByPrimaryKey(OrderMaster record);
+
+    List<OrderMaster> selectAll();
 }
