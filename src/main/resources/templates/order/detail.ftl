@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>order-list</title>
+    <title>order-detail</title>
     <link href="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -57,9 +57,9 @@
         <#--操作-->
             <div class="col-md-12 column">
                 <#if response.data.orderStatus == 0>
-                    <a href="/sell/seller/order/finish?orderId=${response.data.orderId}" type="button"
+                    <a href="/seller/order/finish?orderId=${response.data.orderId}" type="button"
                        class="btn btn-default btn-primary">完结订单</a>
-                    <a href="/sell/seller/order/cancel?orderId=${response.data.orderId}" type="button"
+                    <a href="/seller/order/cancel?orderId=${response.data.orderId}" type="button"
                        class="btn btn-default btn-danger">取消订单</a>
                 </#if>
             </div>

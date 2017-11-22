@@ -66,5 +66,18 @@ public class SellerController {
 //        return response;
     }
 
+    @GetMapping("/finish")
+    public ModelAndView finishOrder(String orderId, Map<String, Object> map){
+        ServiceResponse response = orderService.finishOrder(orderId);
+        map.put("url", "/seller/order/list");
+        if (response.isSuccess()){
+            map.put("msg", "完结订单成功");
+            return new ModelAndView("common/success", map);
+        }else {
+            map.put("msg", response.getMsg());
+            return new ModelAndView("common/error", map);
+        }
+    }
+
 
 }

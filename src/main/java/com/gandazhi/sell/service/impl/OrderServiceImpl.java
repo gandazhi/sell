@@ -26,6 +26,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import lombok.extern.java.Log;
+import org.hibernate.criterion.Order;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -310,5 +311,36 @@ public class OrderServiceImpl implements IOrderService {
         orderDetailVo.setOrderStatus(orderMaster.getOrderStatus());
         orderDetailVo.setOrderAmount(orderAmount);
         return ServiceResponse.createBySuccess(orderDetailVo);
+    }
+
+    /**
+     * 商家后台完结订单
+     * @param orderId
+     * @return
+     */
+    @Override
+    @Transactional
+    public ServiceResponse finishOrder(String orderId) {
+        if (orderId == null || orderId.equals("")){
+            return ServiceResponse.createByErrorMessage("orderId不能为空");
+        }
+        //先判断orderId的状态，如果orderId的状态是已取消，则不许完结
+        OrderMaster orderMaster = orderMasterMapper.selectByPrimaryKey(orderId);
+        if (orderMaster.getOrderStatus() == OrderStatus.CANCEL.getCode()){
+            return ServiceResponse.createByErrorMessage(orderId+"现在的状态是已取消，不能变成已完成");
+        }else {
+            orderMaster.setOrderStatus(OrderStatus.FINISHED.getCode());
+            int resultCount = orderMasterMapper.updateByPrimaryKey(orderMaster);
+            if (resultCount <= 0){
+                try {
+                    throw new WriteDbException("更新订单状态失败");
+                } catch (WriteDbException e) {
+                    log.warning("更新订单状态失败");
+                }
+            }else {
+                return ServiceResponse.createBySuccessMesage("更新订单状态成功");
+            }
+        }
+        return null;
     }
 }
