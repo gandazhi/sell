@@ -156,5 +156,6 @@
   <select id="selectAll" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
     FROM order_master
+    ORDER BY create_time DESC
   </select>
 </mapper>
