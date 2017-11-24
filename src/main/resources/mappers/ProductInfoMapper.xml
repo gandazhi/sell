@@ -9,15 +9,35 @@
       <arg column="product_stock" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="product_description" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="product_icon" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="product_status" javaType="java.lang.Byte" jdbcType="TINYINT" />
+      <arg column="product_status" javaType="java.lang.Integer" jdbcType="TINYINT" />
       <arg column="category_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
     </constructor>
   </resultMap>
+
+  <resultMap id="SellerProductInfoVo" type="com.gandazhi.sell.vo.SellerProductInfoVo">
+    <constructor>
+      <idArg column="product_id" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="product_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="product_icon" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="product_price" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="product_stock" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="product_description" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="product_status" javaType="java.lang.Integer" jdbcType="TINYINT" />
+      <arg column="category_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="category_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+    </constructor>
+  </resultMap>
   <sql id="Base_Column_List">
     product_id, product_name, product_price, product_stock, product_description, product_icon, 
     product_status, category_type, create_time, update_time
+  </sql>
+  <sql id="SellerProductInfo_List">
+    i.product_id, i.product_name, i.product_icon, i.product_price, i.product_stock, i.product_description,
+    i.product_status, i.category_type, i.create_time, i.update_time, c.category_name
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -163,5 +183,12 @@
     SELECT COUNT(1)
     FROM product_info
     WHERE product_id = #{productId}
+  </select>
+
+  <select id="selectLeftJoinCategoryAll" resultMap="SellerProductInfoVo">
+    SELECT <include refid="SellerProductInfo_List"/>
+    FROM product_info AS i
+    LEFT JOIN product_category AS c
+    ON i.category_type = c.category_type
   </select>
 </mapper>

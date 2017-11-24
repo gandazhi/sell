@@ -1,6 +1,7 @@
 package com.gandazhi.sell.dao;
 
 import com.gandazhi.sell.pojo.ProductInfo;
+import com.gandazhi.sell.vo.SellerProductInfoVo;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface ProductInfoMapper {
     List<ProductInfo> selectUpAll();
 
     int selectCountByProductId(String productId);
+
+    List<SellerProductInfoVo> selectLeftJoinCategoryAll();
 }

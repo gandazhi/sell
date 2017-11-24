@@ -9,6 +9,7 @@ import com.gandazhi.sell.pojo.ProductInfo;
 import com.gandazhi.sell.service.IProductService;
 import com.gandazhi.sell.vo.ProductInfoVo;
 import com.gandazhi.sell.vo.ProductVo;
+import com.gandazhi.sell.vo.SellerProductInfoVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -91,5 +92,14 @@ public class ProductServiceImpl implements IProductService {
             productInfoVoList.add(productInfoVo);
         }
         return productInfoVoList;
+    }
+
+    @Override
+    public PageInfo getAllProductList(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<SellerProductInfoVo> productInfoVoList = productInfoMapper.selectLeftJoinCategoryAll();
+
+        PageInfo pageInfo = new PageInfo(productInfoVoList);
+        return pageInfo;
     }
 }
