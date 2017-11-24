@@ -53,6 +53,7 @@ public class SellerProductController {
         } else {
             Map<String, Object> map = Maps.newHashMap();
             map.put("msg", "productStatus状态错误");
+            map.put("url", "/seller/product/list");
             return new ModelAndView("common/error", map);
         }
     }
@@ -70,7 +71,7 @@ public class SellerProductController {
             map.put("msg", changeProductStatusVo.getMsg());
             return new ModelAndView("common/success", map);
         } else {
-            //下架失败
+            //失败
             map.put("msg", changeProductStatusVo.getMsg());
             return new ModelAndView("common/error", map);
         }
