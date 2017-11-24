@@ -41,9 +41,9 @@
                             <td>${list.updateTime?string('yyyy-MM-dd hh:mm:ss')}</td>
                             <td><a href="">详情</a></td>
                             <#if list.productStatus == 0>
-                                <td><a href="">下架</a></td>
+                                <td><a href="/seller/product/changeStatus?productId=${list.productId}&productStatus=1">下架</a></td>
                             <#elseif list.productStatus == 1>
-                                <td><a href="">上架</a></td>
+                                <td><a href="/seller/product/changeStatus?productId=${list.productId}&productStatus=0">上架</a></td>
                             </#if>
                         </tr>
                         </#list>

@@ -1,5 +1,6 @@
 package com.gandazhi.sell.service.impl;
 
+import com.gandazhi.sell.common.ProductStatus;
 import com.gandazhi.sell.common.ServiceResponse;
 
 import com.gandazhi.sell.dao.ProductCategoryMapper;
@@ -9,6 +10,7 @@ import com.gandazhi.sell.pojo.ProductInfo;
 import com.gandazhi.sell.service.IProductService;
 import com.gandazhi.sell.vo.ProductInfoVo;
 import com.gandazhi.sell.vo.ProductVo;
+import com.gandazhi.sell.vo.SellerChangeProductStatusVo;
 import com.gandazhi.sell.vo.SellerProductInfoVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -101,5 +103,51 @@ public class ProductServiceImpl implements IProductService {
 
         PageInfo pageInfo = new PageInfo(productInfoVoList);
         return pageInfo;
+    }
+
+    @Override
+    public SellerChangeProductStatusVo changeProduct(String productId, ProductStatus productStatus) {
+        boolean isSuccess = false;
+        String msg = "";
+        ProductInfo productInfo = productInfoMapper.selectByPrimaryKey(productId);
+        if (productInfo == null) {
+            msg = "没有找到" + productId + "这个商品";
+        }else {
+            switch (productStatus){
+                case UP:
+                    if (productInfo.getProductStatus() != ProductStatus.DOWN.getCode()){
+                        msg = "只有下架的商品才能上架";
+                    }else {
+                        productInfo.setProductStatus(ProductStatus.UP.getCode());
+                        int resultCount = productInfoMapper.updateByPrimaryKeySelective(productInfo);
+                        if (resultCount <= 0) {
+                            msg = "更新商品状态失败";
+                        } else {
+                            isSuccess = true;
+                            msg = "更新商品状态成功";
+                        }
+                    }
+                    break;
+
+                case DOWN:
+                    if (productInfo.getProductStatus() != ProductStatus.UP.getCode()){
+                        msg = "只有上架架的商品才能下架";
+                    }else {
+                        productInfo.setProductStatus(ProductStatus.DOWN.getCode());
+                        int resultCount = productInfoMapper.updateByPrimaryKeySelective(productInfo);
+                        if (resultCount <= 0) {
+                            msg = "更新商品状态失败";
+                        } else {
+                            isSuccess = true;
+                            msg = "更新商品状态成功";
+                        }
+                    }
+                    break;
+            }
+        }
+        SellerChangeProductStatusVo sellerChangeProductStatusVo = new SellerChangeProductStatusVo();
+        sellerChangeProductStatusVo.setIsSuccess(isSuccess);
+        sellerChangeProductStatusVo.setMsg(msg);
+        return sellerChangeProductStatusVo;
     }
 }
