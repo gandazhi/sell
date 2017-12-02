@@ -154,7 +154,7 @@
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = now(),
       </if>
     </set>
     where product_id = #{productId,jdbcType=VARCHAR}
@@ -169,7 +169,7 @@
       product_status = #{productStatus,jdbcType=TINYINT},
       category_type = #{categoryType,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where product_id = #{productId,jdbcType=VARCHAR}
   </update>
 
@@ -190,5 +190,13 @@
     FROM product_info AS i
     LEFT JOIN product_category AS c
     ON i.category_type = c.category_type
+  </select>
+
+  <select id="selectLeftJoinCategoryByProductId" resultMap="SellerProductInfoVo" parameterType="string">
+    SELECT <include refid="SellerProductInfo_List"/>
+    FROM product_info AS i
+    LEFT JOIN product_category AS c
+    ON i.category_type = c.category_type
+    WHERE product_id = #{productId}
   </select>
 </mapper>

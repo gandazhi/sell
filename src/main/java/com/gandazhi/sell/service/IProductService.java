@@ -2,6 +2,8 @@ package com.gandazhi.sell.service;
 
 import com.gandazhi.sell.common.ProductStatus;
 import com.gandazhi.sell.common.ServiceResponse;
+import com.gandazhi.sell.dto.UpdateProductInfoDto;
+import com.gandazhi.sell.pojo.ProductInfo;
 import com.gandazhi.sell.vo.SellerChangeProductStatusVo;
 import com.github.pagehelper.PageInfo;
 
@@ -15,5 +17,14 @@ public interface IProductService {
 
     //商家后台更改商品
     SellerChangeProductStatusVo changeProduct(String productId, ProductStatus productStatus);
+
+    ServiceResponse updateOrCreateProduct(String productId, UpdateProductInfoDto updateProductInfoDto);
+
+    //获取全部分类名称
+    ServiceResponse getAllCategory();
+
+    //获取商户后台中的一个商品列表信息Z
+    ServiceResponse getSellerProductInfo(String productId);
+
 
 }

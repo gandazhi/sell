@@ -41,4 +41,9 @@ public class BuyerProductController {
         }
         return iOrderService.createOrder(orderMasterDto);
     }
+
+    @GetMapping("/getAllCategoryName")
+    public ServiceResponse getAllCategoryName(){
+        return iProductService.getAllCategory();
+    }
 }

@@ -3,8 +3,11 @@ package com.gandazhi.sell.service.impl;
 import com.gandazhi.sell.common.ProductStatus;
 import com.gandazhi.sell.common.ServiceResponse;
 
+import com.gandazhi.sell.customException.WriteDbException;
 import com.gandazhi.sell.dao.ProductCategoryMapper;
 import com.gandazhi.sell.dao.ProductInfoMapper;
+import com.gandazhi.sell.dto.ProductInfoDto;
+import com.gandazhi.sell.dto.UpdateProductInfoDto;
 import com.gandazhi.sell.pojo.ProductCategory;
 import com.gandazhi.sell.pojo.ProductInfo;
 import com.gandazhi.sell.service.IProductService;
@@ -15,14 +18,18 @@ import com.gandazhi.sell.vo.SellerProductInfoVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service("iProductService")
 public class ProductServiceImpl implements IProductService {
 
@@ -112,12 +119,12 @@ public class ProductServiceImpl implements IProductService {
         ProductInfo productInfo = productInfoMapper.selectByPrimaryKey(productId);
         if (productInfo == null) {
             msg = "没有找到" + productId + "这个商品";
-        }else {
-            switch (productStatus){
+        } else {
+            switch (productStatus) {
                 case UP:
-                    if (productInfo.getProductStatus() != ProductStatus.DOWN.getCode()){
+                    if (productInfo.getProductStatus() != ProductStatus.DOWN.getCode()) {
                         msg = "只有下架的商品才能上架";
-                    }else {
+                    } else {
                         productInfo.setProductStatus(ProductStatus.UP.getCode());
                         int resultCount = productInfoMapper.updateByPrimaryKeySelective(productInfo);
                         if (resultCount <= 0) {
@@ -130,9 +137,9 @@ public class ProductServiceImpl implements IProductService {
                     break;
 
                 case DOWN:
-                    if (productInfo.getProductStatus() != ProductStatus.UP.getCode()){
+                    if (productInfo.getProductStatus() != ProductStatus.UP.getCode()) {
                         msg = "只有上架架的商品才能下架";
-                    }else {
+                    } else {
                         productInfo.setProductStatus(ProductStatus.DOWN.getCode());
                         int resultCount = productInfoMapper.updateByPrimaryKeySelective(productInfo);
                         if (resultCount <= 0) {
@@ -149,5 +156,54 @@ public class ProductServiceImpl implements IProductService {
         sellerChangeProductStatusVo.setIsSuccess(isSuccess);
         sellerChangeProductStatusVo.setMsg(msg);
         return sellerChangeProductStatusVo;
+    }
+
+    //获取全部分类的名字
+    @Override
+    public ServiceResponse getAllCategory() {
+        List<String> categoryNameList = productCategoryMapper.selectAllCategoryName();
+        if (CollectionUtils.isEmpty(categoryNameList)) {
+            return ServiceResponse.createBySuccessMesage("现在还没有分类");
+        } else {
+            return ServiceResponse.createBySuccess(categoryNameList);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ServiceResponse updateOrCreateProduct(String productId, UpdateProductInfoDto updateProductInfoDto) {
+        if (productId == null || StringUtils.isEmpty(productId)) {
+            //沒有传productId，创建一个新的product
+            return null;
+        } else {
+            //传了productId，更新product
+            ProductInfo productInfo = productInfoMapper.selectByPrimaryKey(productId);
+            if (productInfo.getProductId().equals("")) {
+                return ServiceResponse.createByErrorMessage("没有找到" + productId + "这个商品");
+            }else {
+                //找到product，更新product
+                BeanUtils.copyProperties(updateProductInfoDto, productInfo);
+
+                ProductCategory productCategory = productCategoryMapper.selectByCategoryName(updateProductInfoDto.getCategoryName());
+                productInfo.setCategoryType(productCategory.getCategoryType());
+                int resultCount = productInfoMapper.updateByPrimaryKeySelective(productInfo);
+                if (resultCount <= 0){
+                    try {
+                        throw new WriteDbException("更新productInfo表错误");
+                    } catch (WriteDbException e) {
+                        log.info("更新productInfo表错误");
+                        return ServiceResponse.createByErrorMessage("更新productInfo表错误");
+                    }
+                }
+
+                return ServiceResponse.createBySuccessMesage("更新product成功");
+            }
+        }
+    }
+
+    @Override
+    public ServiceResponse getSellerProductInfo(String productId) {
+        SellerProductInfoVo sellerProductInfoVo = productInfoMapper.selectLeftJoinCategoryByProductId(productId);
+        return ServiceResponse.createBySuccess(sellerProductInfoVo);
     }
 }

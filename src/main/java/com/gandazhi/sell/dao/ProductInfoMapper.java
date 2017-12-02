@@ -23,4 +23,6 @@ public interface ProductInfoMapper {
     int selectCountByProductId(String productId);
 
     List<SellerProductInfoVo> selectLeftJoinCategoryAll();
+
+    SellerProductInfoVo selectLeftJoinCategoryByProductId(String productId);
 }
