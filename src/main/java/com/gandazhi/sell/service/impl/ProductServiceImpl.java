@@ -171,7 +171,7 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     @Transactional
-    public ServiceResponse updateOrCreateProduct(String productId, UpdateProductInfoDto updateProductInfoDto) {
+    public ServiceResponse updateProduct(String productId, UpdateProductInfoDto updateProductInfoDto) {
         if (productId == null || StringUtils.isEmpty(productId)) {
             //沒有传productId，创建一个新的product
             return null;
@@ -180,18 +180,18 @@ public class ProductServiceImpl implements IProductService {
             ProductInfo productInfo = productInfoMapper.selectByPrimaryKey(productId);
             if (productInfo.getProductId().equals("")) {
                 return ServiceResponse.createByErrorMessage("没有找到" + productId + "这个商品");
-            }else {
+            } else {
                 //找到product，更新product
                 BeanUtils.copyProperties(updateProductInfoDto, productInfo);
 
                 ProductCategory productCategory = productCategoryMapper.selectByCategoryName(updateProductInfoDto.getCategoryName());
                 productInfo.setCategoryType(productCategory.getCategoryType());
                 int resultCount = productInfoMapper.updateByPrimaryKeySelective(productInfo);
-                if (resultCount <= 0){
+                if (resultCount <= 0) {
                     try {
                         throw new WriteDbException("更新productInfo表错误");
                     } catch (WriteDbException e) {
-                        log.info("更新productInfo表错误");
+                        log.error("更新productInfo表错误");
                         return ServiceResponse.createByErrorMessage("更新productInfo表错误");
                     }
                 }
@@ -205,5 +205,33 @@ public class ProductServiceImpl implements IProductService {
     public ServiceResponse getSellerProductInfo(String productId) {
         SellerProductInfoVo sellerProductInfoVo = productInfoMapper.selectLeftJoinCategoryByProductId(productId);
         return ServiceResponse.createBySuccess(sellerProductInfoVo);
+    }
+
+    @Override
+    @Transactional
+    public ServiceResponse createProduct(ProductInfo productInfo) {
+        int resultCount = productInfoMapper.insert(productInfo);
+        if (resultCount <= 0) {
+            try {
+                throw new WriteDbException("插入productInfo错误");
+            } catch (WriteDbException e) {
+                log.error("插入productInfo错误");
+                return ServiceResponse.createByErrorMessage("插入productInfo错误");
+            }
+        } else {
+            return ServiceResponse.createBySuccessMesage("新建商品成功");
+        }
+    }
+
+    @Override
+    public ServiceResponse getCategoryType(String categoryName) {
+        if (categoryName == null || StringUtils.isEmpty(categoryName)) {
+            return ServiceResponse.createByErrorMessage("categoryName不能为空");
+        }
+        ProductCategory productCategory = productCategoryMapper.selectByCategoryName(categoryName);
+        if (productCategory.getCategoryType() == null) {
+            return ServiceResponse.createByErrorMessage("没有找到" + categoryName + "这个分类");
+        }
+        return ServiceResponse.createBySuccess(productCategory.getCategoryType());
     }
 }

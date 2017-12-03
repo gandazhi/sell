@@ -31,7 +31,7 @@ public class ApiSellerProductController {
     public ServiceResponse addOrChangeProduct(@RequestParam(value = "productId", required = false) String productId, UpdateProductInfoDto updateProductInfoDto) {
         if (StringUtils.isNotBlank(productId)) {
             //传了productId,更新product
-            return iProductService.updateOrCreateProduct(productId, updateProductInfoDto);
+            return iProductService.updateProduct(productId, updateProductInfoDto);
         } else {
             return null;
         }
@@ -44,5 +44,10 @@ public class ApiSellerProductController {
         }else {
             return iProductService.getSellerProductInfo(productId);
         }
+    }
+
+    @GetMapping("/getCategoryType")
+    public ServiceResponse getCategoryType(String categoryName){
+        return iProductService.getCategoryType(categoryName);
     }
 }

@@ -1,5 +1,7 @@
 package com.gandazhi.sell.pojo;
 
+import com.gandazhi.sell.common.ProductStatus;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -16,7 +18,7 @@ public class ProductInfo {
 
     private String productIcon;
 
-    private Integer productStatus;
+    private Integer productStatus = ProductStatus.UP.getCode(); //默认上架
 
     private Integer categoryType;
 

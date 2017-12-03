@@ -18,13 +18,18 @@ public interface IProductService {
     //商家后台更改商品
     SellerChangeProductStatusVo changeProduct(String productId, ProductStatus productStatus);
 
-    ServiceResponse updateOrCreateProduct(String productId, UpdateProductInfoDto updateProductInfoDto);
+    ServiceResponse updateProduct(String productId, UpdateProductInfoDto updateProductInfoDto);
 
     //获取全部分类名称
     ServiceResponse getAllCategory();
 
-    //获取商户后台中的一个商品列表信息Z
+    //获取商户后台中的一个商品列表信息
     ServiceResponse getSellerProductInfo(String productId);
 
+    //商户后台创建一个新商品
+    ServiceResponse createProduct(ProductInfo productInfo);
+
+    //商户后台根据传来的分类名返回分类type
+    ServiceResponse getCategoryType(String categoryName);
 
 }

@@ -188,8 +188,8 @@
                 ;
                 $('#changeCategory').val(oldProductInfo.category);
             },
-            error: function () {
-                alert(2222);
+            error: function (err) {
+                alert(err);
             }
 
 

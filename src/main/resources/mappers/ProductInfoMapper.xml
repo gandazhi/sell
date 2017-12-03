@@ -9,7 +9,7 @@
       <arg column="product_stock" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="product_description" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="product_icon" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="product_status" javaType="java.lang.Integer" jdbcType="TINYINT" />
+      <arg column="product_status" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="category_type" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
@@ -190,6 +190,7 @@
     FROM product_info AS i
     LEFT JOIN product_category AS c
     ON i.category_type = c.category_type
+    ORDER BY create_time DESC 
   </select>
 
   <select id="selectLeftJoinCategoryByProductId" resultMap="SellerProductInfoVo" parameterType="string">
