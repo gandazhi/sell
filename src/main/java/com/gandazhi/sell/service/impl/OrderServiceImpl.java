@@ -2,6 +2,7 @@ package com.gandazhi.sell.service.impl;
 
 import com.gandazhi.sell.common.OrderStatus;
 import com.gandazhi.sell.common.PayStatus;
+import com.gandazhi.sell.common.RedisIndex;
 import com.gandazhi.sell.common.ServiceResponse;
 import com.gandazhi.sell.customException.WriteDbException;
 import com.gandazhi.sell.dao.CartInfoMapper;
@@ -25,6 +26,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import lombok.extern.java.Log;
+import org.hibernate.criterion.Order;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,6 +68,7 @@ public class OrderServiceImpl implements IOrderService {
         //先从redis和MySQL中取出购物车的数据
         String orderId = createOrderId();
         Jedis jedis = new Jedis();
+        jedis.select(RedisIndex.CART.getCode());
         final String KEY = orderMasterDto.getBuyerOpenid() + "_cart";
         String redisCartJson = jedis.get(KEY);
         jedis.close();
@@ -83,10 +86,10 @@ public class OrderServiceImpl implements IOrderService {
                 orderAmount = BigDecimalUtil.mul(productInfoDto.getProductQuantity().doubleValue(), productInfoDto.getProductPrice().doubleValue()).add(orderAmount);
             }
         } else {
-            ProductInfoDto productInfoDto = new ProductInfoDto();
             //redis中有数据，先查了redis中的数据，再查MySQL中的数据，最后整合
             List<CartRedisDto> cartRedisDtoList = getRedisCart(redisCartJson);
             for (CartRedisDto cartRedisDto : cartRedisDtoList) {
+                ProductInfoDto productInfoDto = new ProductInfoDto();
                 ProductInfo productInfo = productInfoMapper.selectByPrimaryKey(cartRedisDto.getProductId());
                 productInfoDto.setProductName(productInfo.getProductName());
                 productInfoDto.setProductId(cartRedisDto.getProductId());
@@ -287,8 +290,8 @@ public class OrderServiceImpl implements IOrderService {
         OrderDetailVo orderDetailVo = new OrderDetailVo();
         BigDecimal orderAmount = new BigDecimal(BigInteger.ZERO);
         BigDecimal productAmount = new BigDecimal(BigInteger.ZERO);
+        List<ProductInfoListDto> productInfoListDtoList = Lists.newArrayList();
         for (OrderDetail orderDetail : orderDetailList){
-            List<ProductInfoListDto> productInfoListDtoList = Lists.newArrayList();
             ProductInfoListDto productInfoListDto = new ProductInfoListDto();
 
             orderDetailVo.setOrderId(orderDetail.getOrderId());
@@ -299,14 +302,45 @@ public class OrderServiceImpl implements IOrderService {
             productAmount = BigDecimalUtil.mul(orderDetail.getProductQuantity(), orderDetail.getProductPrice().doubleValue());
             productInfoListDto.setProductAmount(productAmount);
             productInfoListDtoList.add(productInfoListDto);
-            orderDetailVo.setProductInfoListDtoList(productInfoListDtoList);
             //计算orderAmount
             orderAmount = BigDecimalUtil.add(orderAmount.doubleValue(), productAmount.doubleValue());
 
         }
+        orderDetailVo.setProductInfoListDtoList(productInfoListDtoList);
         OrderMaster orderMaster = orderMasterMapper.selectByPrimaryKey(orderId);
         orderDetailVo.setOrderStatus(orderMaster.getOrderStatus());
         orderDetailVo.setOrderAmount(orderAmount);
         return ServiceResponse.createBySuccess(orderDetailVo);
+    }
+
+    /**
+     * 商家后台完结订单
+     * @param orderId
+     * @return
+     */
+    @Override
+    @Transactional
+    public ServiceResponse finishOrder(String orderId) {
+        if (orderId == null || orderId.equals("")){
+            return ServiceResponse.createByErrorMessage("orderId不能为空");
+        }
+        //先判断orderId的状态，如果orderId的状态是已取消，则不许完结
+        OrderMaster orderMaster = orderMasterMapper.selectByPrimaryKey(orderId);
+        if (orderMaster.getOrderStatus() == OrderStatus.CANCEL.getCode()){
+            return ServiceResponse.createByErrorMessage(orderId+"现在的状态是已取消，不能变成已完成");
+        }else {
+            orderMaster.setOrderStatus(OrderStatus.FINISHED.getCode());
+            int resultCount = orderMasterMapper.updateByPrimaryKey(orderMaster);
+            if (resultCount <= 0){
+                try {
+                    throw new WriteDbException("更新订单状态失败");
+                } catch (WriteDbException e) {
+                    log.warning("更新订单状态失败");
+                }
+            }else {
+                return ServiceResponse.createBySuccessMesage("更新订单状态成功");
+            }
+        }
+        return null;
     }
 }

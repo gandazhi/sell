@@ -16,16 +16,17 @@ import java.util.Map;
 @Controller
 //@RestController
 @RequestMapping("/seller/order")
-public class SellerController {
+public class SellerOrderController {
 
     @Autowired
     private IOrderService orderService;
 
     /**
-     * @param pageNum
-     * @param pageSize
-     * @param map
-     * @return
+     * 商家后台获取订单列表
+     * @param pageNum 分页，当前页数
+     * @param pageSize 分页，每页显示的个数
+     * @param map 传到模板的数据
+     * @return 模板
      */
     @GetMapping("/list")
     public ModelAndView getOrderList(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
@@ -37,9 +38,10 @@ public class SellerController {
     }
 
     /**
-     * @param orderId
-     * @param map
-     * @return
+     * 商家后台取消订单
+     * @param orderId 待取消的订单id
+     * @param map 传到模板的数据
+     * @return  模板
      */
     @GetMapping("/cancel")
     public ModelAndView cancelOrder(@RequestParam(value = "orderId", defaultValue = "") String orderId, Map<String, Object> map) {
@@ -58,12 +60,37 @@ public class SellerController {
         }
     }
 
+    /**
+     * 商家后台获取订单详情
+     * @param orderId 待获取订单详情的id
+     * @param map 传到模板的数据
+     * @return 模板
+     */
     @GetMapping("/detail")
     public ModelAndView getOrderDetail(@RequestParam(value = "orderId", defaultValue = "") String orderId, Map<String, Object> map) {
         ServiceResponse response = orderService.getOrderDetail(orderId);
         map.put("response", response);
         return new ModelAndView("order/detail", map);
 //        return response;
+    }
+
+    /**
+     * 商家后台完结订单
+     * @param orderId 待完结的订单
+     * @param map 传到模板的数据
+     * @return 模板
+     */
+    @GetMapping("/finish")
+    public ModelAndView finishOrder(String orderId, Map<String, Object> map){
+        ServiceResponse response = orderService.finishOrder(orderId);
+        map.put("url", "/seller/order/list");
+        if (response.isSuccess()){
+            map.put("msg", "完结订单成功");
+            return new ModelAndView("common/success", map);
+        }else {
+            map.put("msg", response.getMsg());
+            return new ModelAndView("common/error", map);
+        }
     }
 
 

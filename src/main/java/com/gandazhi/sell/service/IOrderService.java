@@ -19,5 +19,7 @@ public interface IOrderService {
 
     ServiceResponse getOrderDetail(String orderId);
 
+    ServiceResponse finishOrder(String orderId);
+
 
 }

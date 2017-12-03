@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
+    <title>Title</title>
+</head>
+<body>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <a id="modal-666968" href="#modal-container-666968" role="button" class="btn" data-toggle="modal">触发遮罩窗体</a>
+
+            <div class="modal fade" id="modal-container-666968" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                修改商品信息
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            商品id<input type="text" class="form-control" value="11111">
+                        </div>
+                        <div class="modal-body">
+                            名称<input type="text" class="form-control" value="11111">
+                        </div>
+                        <div class="modal-body">
+                            <form id="upload" enctype="multipart/form-data" method="post" action="/api/upload/image">
+                                图片<img id="img" height="100" width="100"
+                                       src="http://owioow1ef.bkt.clouddn.com/1505889358794_22.png">
+                                <input id="file_upload" name="file_upload" type="file" multiple="true"
+                                       style="float: right;">
+                                <input type="submit" value="a" style="float: right;">
+                            </form>
+                        </div>
+                        <div class="modal-body">
+                            库存<input type="text" class="form-control" value="11111">
+                        </div>
+                        <div class="modal-body">
+                            描述<input type="text" class="form-control" value="11111">
+                        </div>
+                        <div class="modal-body">
+                            类目<input type="text" class="form-control" value="11111">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.bootcss.com/jquery/1.8.1/jquery.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,5 +1,7 @@
 package com.gandazhi.sell.pojo;
 
+import com.gandazhi.sell.common.ProductStatus;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -16,7 +18,7 @@ public class ProductInfo {
 
     private String productIcon;
 
-    private Byte productStatus;
+    private Integer productStatus = ProductStatus.UP.getCode(); //默认上架
 
     private Integer categoryType;
 
@@ -24,7 +26,7 @@ public class ProductInfo {
 
     private Date updateTime;
 
-    public ProductInfo(String productId, String productName, BigDecimal productPrice, Integer productStock, String productDescription, String productIcon, Byte productStatus, Integer categoryType, Date createTime, Date updateTime) {
+    public ProductInfo(String productId, String productName, BigDecimal productPrice, Integer productStock, String productDescription, String productIcon, Integer productStatus, Integer categoryType, Date createTime, Date updateTime) {
         this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -89,14 +91,6 @@ public class ProductInfo {
         this.productIcon = productIcon == null ? null : productIcon.trim();
     }
 
-    public Byte getProductStatus() {
-        return productStatus;
-    }
-
-    public void setProductStatus(Byte productStatus) {
-        this.productStatus = productStatus;
-    }
-
     public Integer getCategoryType() {
         return categoryType;
     }
@@ -119,5 +113,13 @@ public class ProductInfo {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getProductStatus() {
+        return productStatus;
+    }
+
+    public void setProductStatus(Integer productStatus) {
+        this.productStatus = productStatus;
     }
 }

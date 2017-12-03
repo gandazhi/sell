@@ -101,6 +101,16 @@
         <foreach collection="categoryTypeList" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>
 
+    <select id="selectAllCategoryName" resultType="string">
+        SELECT category_name
+        FROM product_category
+    </select>
+
+    <select id="selectByCategoryName" resultMap="BaseResultMap" parameterType="string">
+        SELECT <include refid="Base_Column_List"/>
+        FROM  product_category
+        WHERE category_name = #{categoryName}
     </select>
 </mapper>

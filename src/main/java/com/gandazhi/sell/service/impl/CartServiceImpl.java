@@ -257,8 +257,8 @@ public class CartServiceImpl implements ICartService {
         Integer redisQuantity = new Integer("0");
         if (cartRedisListDto != null) {
             //redis中有数据
-            CartVo redisCartVo = new CartVo();
             for (CartRedisDto cartRedisDto : cartRedisListDto.getCartRedisDtos()) {
+                CartVo redisCartVo = new CartVo();
                 redisCartVo.setProductId(cartRedisDto.getProductId());
                 redisCartVo.setQuantity(cartRedisDto.getQuantity());
                 redisQuantity = redisQuantity + cartRedisDto.getQuantity();
