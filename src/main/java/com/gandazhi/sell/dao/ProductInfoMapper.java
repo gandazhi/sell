@@ -2,6 +2,7 @@ package com.gandazhi.sell.dao;
 
 import com.gandazhi.sell.pojo.ProductInfo;
 import com.gandazhi.sell.vo.SellerProductInfoVo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface ProductInfoMapper {
     List<SellerProductInfoVo> selectLeftJoinCategoryAll();
 
     SellerProductInfoVo selectLeftJoinCategoryByProductId(String productId);
+
+    int updateCategoryTypeByOldType(@Param(value = "oldCategoryType") Integer oldCategoryType, @Param(value = "newCategoryType") Integer newCategoryType);
 }
