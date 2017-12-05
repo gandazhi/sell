@@ -29,4 +29,10 @@ public class SellerCategoryController {
         map.put("pageInfo", pageInfo);
         return new ModelAndView("category/list", map);
     }
+
+    @GetMapping("/index")
+    public ModelAndView index(Map<String, Object> map){
+        return new ModelAndView("category/index", map);
+    }
+
 }

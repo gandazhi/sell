@@ -1,6 +1,7 @@
 package com.gandazhi.sell.controller;
 
 import com.gandazhi.sell.common.ServiceResponse;
+import com.gandazhi.sell.dto.SellerProductCategoryDto;
 import com.gandazhi.sell.pojo.ProductCategory;
 import com.gandazhi.sell.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +25,10 @@ public class ApiSellerCategoryController {
     @PostMapping("/updateProductCategory")
     public ServiceResponse updateCategory(ProductCategory productCategory){
         return iCategoryService.updateCategory(productCategory);
+    }
+
+    @PostMapping("/addProductCategory")
+    public ServiceResponse addCategory(SellerProductCategoryDto sellerProductCategoryDto){
+        return iCategoryService.addCategory(sellerProductCategoryDto);
     }
 }

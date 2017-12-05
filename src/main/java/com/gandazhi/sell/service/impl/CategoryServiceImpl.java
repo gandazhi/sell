@@ -4,11 +4,13 @@ import com.gandazhi.sell.common.ServiceResponse;
 import com.gandazhi.sell.customException.WriteDbException;
 import com.gandazhi.sell.dao.ProductCategoryMapper;
 import com.gandazhi.sell.dao.ProductInfoMapper;
+import com.gandazhi.sell.dto.SellerProductCategoryDto;
 import com.gandazhi.sell.pojo.ProductCategory;
 import com.gandazhi.sell.service.ICategoryService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,5 +71,25 @@ public class CategoryServiceImpl implements ICategoryService{
         }
 
         return ServiceResponse.createBySuccessMesage("更新category_type成功");
+    }
+
+    @Override
+    public ServiceResponse addCategory(SellerProductCategoryDto sellerProductCategoryDto) {
+        ProductCategory productCategory = new ProductCategory();
+        BeanUtils.copyProperties(sellerProductCategoryDto, productCategory);
+        if (productCategory.getCategoryType() == null || StringUtils.isEmpty(productCategory.getCategoryName()) || productCategory.getCategoryName() == null){
+            return ServiceResponse.createByErrorMessage("categoryType或categoryName不能为空");
+        }
+        int resultCount = productCategoryMapper.insertSelective(productCategory);
+        if (resultCount <= 0){
+            try {
+                throw new WriteDbException("插入product_category表失败");
+            } catch (WriteDbException e) {
+                log.error("插入product_category表失败");
+                return ServiceResponse.createByErrorMessage("插入product_category表失败");
+            }
+        }else {
+            return ServiceResponse.createBySuccessMesage("新建分类成功");
+        }
     }
 }

@@ -97,7 +97,7 @@
      */
     function getCategoryType(categoryName) {
         $.ajax({
-            url: '/api/seller/getCategoryType',
+            url: '/api/seller/product/getCategoryType',
             type: 'GET',
             dataType: 'JSON',
             async: false,
