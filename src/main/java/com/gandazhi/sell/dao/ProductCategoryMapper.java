@@ -23,4 +23,6 @@ public interface ProductCategoryMapper {
     List<String> selectAllCategoryName();
 
     ProductCategory selectByCategoryName(String categoryName);
+
+    List<ProductCategory> selectAllProductCategory();
 }

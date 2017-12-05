@@ -113,4 +113,9 @@
         FROM  product_category
         WHERE category_name = #{categoryName}
     </select>
+
+    <select id="selectAllProductCategory" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM product_category
+    </select>
 </mapper>

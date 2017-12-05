@@ -86,7 +86,7 @@
             </div>
         </div>
     </div>
-
+    <#--修改遮罩-->
     <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
         <div class="modal-dialog">
@@ -214,7 +214,7 @@
         };
 
         $.ajax({
-            url: '/api/seller/updateProduct',
+            url: '/api/seller/product/updateProduct',
             type: 'POST',
             dataType: 'JSON',
             data: fromData,
@@ -235,7 +235,7 @@
             productId: productId,
         };
         $.ajax({
-            url: '/api/seller/getProduct',
+            url: '/api/seller/product/getProduct',
             type: 'GET',
             dataType: 'JSON',
             data: ajaxData,

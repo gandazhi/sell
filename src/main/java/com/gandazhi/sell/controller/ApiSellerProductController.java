@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @create 2017-12-02 下午5:22
  **/
 @RestController
-@RequestMapping("/api/seller/")
+@RequestMapping("/api/seller/product")
 public class ApiSellerProductController {
 
     @Autowired
