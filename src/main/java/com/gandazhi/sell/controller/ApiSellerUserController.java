@@ -25,4 +25,9 @@ public class ApiSellerUserController {
     public ServiceResponse login(HttpServletResponse response, String username, String password){
         return iUserService.login(response, username, password);
     }
+
+    @PostMapping("/register")
+    public ServiceResponse register(String username, String password){
+        return iUserService.register(username, password);
+    }
 }

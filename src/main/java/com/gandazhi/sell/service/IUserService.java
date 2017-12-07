@@ -10,4 +10,9 @@ public interface IUserService {
 
     ServiceResponse login(HttpServletResponse response, String username, String password);
 
+    ServiceResponse register(String username, String password);
+
+    //字段进行验证
+    ServiceResponse<String> checkValid(String str, String type);
+
 }

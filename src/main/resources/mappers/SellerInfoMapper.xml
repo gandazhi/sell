@@ -3,7 +3,7 @@
 <mapper namespace="com.gandazhi.sell.dao.SellerInfoMapper">
   <resultMap id="BaseResultMap" type="com.gandazhi.sell.pojo.SellerInfo">
     <constructor>
-      <idArg column="id" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="username" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="openid" javaType="java.lang.String" jdbcType="VARCHAR" />
@@ -14,13 +14,13 @@
   <sql id="Base_Column_List">
     id, username, password, openid, create_time, update_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from seller_info
     where id = #{id,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from seller_info
     where id = #{id,jdbcType=VARCHAR}
   </delete>
@@ -29,7 +29,7 @@
       openid, create_time, update_time
       )
     values (#{id,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{openid,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      #{openid,jdbcType=VARCHAR}, now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="com.gandazhi.sell.pojo.SellerInfo">
@@ -91,7 +91,7 @@
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = now()
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
@@ -102,7 +102,7 @@
       password = #{password,jdbcType=VARCHAR},
       openid = #{openid,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where id = #{id,jdbcType=VARCHAR}
   </update>
 
@@ -117,5 +117,11 @@
     FROM seller_info
     WHERE username = #{username}
     AND password = #{md5Password}
+  </select>
+
+  <select id="selectCountByUsername" resultType="int" parameterType="string">
+    SELECT COUNT(1)
+    FROM seller_info
+    WHERE username = #{username}
   </select>
 </mapper>

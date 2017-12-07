@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class SellerInfo {
     @Expose
-    private String id;
+    private Integer id;
 
     @Expose
     private String username;
@@ -23,7 +23,7 @@ public class SellerInfo {
     @Expose
     private Date updateTime;
 
-    public SellerInfo(String id, String username, String password, String openid, Date createTime, Date updateTime) {
+    public SellerInfo(Integer id, String username, String password, String openid, Date createTime, Date updateTime) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -36,12 +36,12 @@ public class SellerInfo {
         super();
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUsername() {
