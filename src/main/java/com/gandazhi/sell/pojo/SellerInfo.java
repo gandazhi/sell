@@ -1,18 +1,26 @@
 package com.gandazhi.sell.pojo;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Date;
 
 public class SellerInfo {
+    @Expose
     private String id;
 
+    @Expose
     private String username;
 
+    @Expose(serialize = false)
     private String password;
 
+    @Expose
     private String openid;
 
+    @Expose
     private Date createTime;
 
+    @Expose
     private Date updateTime;
 
     public SellerInfo(String id, String username, String password, String openid, Date createTime, Date updateTime) {

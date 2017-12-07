@@ -111,4 +111,11 @@
     FROM seller_info
     WHERE openid = #{openId}
   </select>
+
+  <select id="selectLogin" parameterType="string" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM seller_info
+    WHERE username = #{username}
+    AND password = #{md5Password}
+  </select>
 </mapper>

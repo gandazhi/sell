@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum RedisIndex {
-    CART(0,"购物车");
+    CART(0,"购物车"),
+    SESSION(1,"session");
 
     private int code;
     private String msg;

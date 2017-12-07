@@ -1,6 +1,7 @@
 package com.gandazhi.sell.dao;
 
 import com.gandazhi.sell.pojo.SellerInfo;
+import org.apache.ibatis.annotations.Param;
 
 public interface SellerInfoMapper {
     int deleteByPrimaryKey(String id);
@@ -16,4 +17,6 @@ public interface SellerInfoMapper {
     int updateByPrimaryKey(SellerInfo record);
 
     int selectByOpenId(String openId);
+
+    SellerInfo selectLogin(@Param(value = "username") String username, @Param(value = "md5Password") String md5Password);
 }
