@@ -62,7 +62,6 @@ public class UserServiceImpl implements IUserService {
             String tokenUUID = UUID.randomUUID().toString();
             Integer expire = RedisConstant.EXPIRE;
 
-            sellerInfo.setPassword(StringUtils.EMPTY); //把密码至空
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();  //实体属性为null时不参加序列化
             String userJson = gson.toJson(sellerInfo);
 
