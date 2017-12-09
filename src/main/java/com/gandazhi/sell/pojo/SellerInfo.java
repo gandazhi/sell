@@ -1,21 +1,29 @@
 package com.gandazhi.sell.pojo;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Date;
 
 public class SellerInfo {
-    private String id;
+    @Expose
+    private Integer id;
 
+    @Expose
     private String username;
 
+    @Expose(serialize = false)
     private String password;
 
+    @Expose
     private String openid;
 
+    @Expose
     private Date createTime;
 
+    @Expose
     private Date updateTime;
 
-    public SellerInfo(String id, String username, String password, String openid, Date createTime, Date updateTime) {
+    public SellerInfo(Integer id, String username, String password, String openid, Date createTime, Date updateTime) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -28,12 +36,12 @@ public class SellerInfo {
         super();
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUsername() {

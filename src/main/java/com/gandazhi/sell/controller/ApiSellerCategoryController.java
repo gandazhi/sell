@@ -23,12 +23,12 @@ public class ApiSellerCategoryController {
     private ICategoryService iCategoryService;
 
     @PostMapping("/updateProductCategory")
-    public ServiceResponse updateCategory(ProductCategory productCategory){
+    public ServiceResponse updateCategory(ProductCategory productCategory) {
         return iCategoryService.updateCategory(productCategory);
     }
 
     @PostMapping("/addProductCategory")
-    public ServiceResponse addCategory(SellerProductCategoryDto sellerProductCategoryDto){
+    public ServiceResponse addCategory(SellerProductCategoryDto sellerProductCategoryDto) {
         return iCategoryService.addCategory(sellerProductCategoryDto);
     }
 }
