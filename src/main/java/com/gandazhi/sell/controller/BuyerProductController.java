@@ -36,9 +36,6 @@ public class BuyerProductController {
 
     @PostMapping("/createOrder")
     public ServiceResponse createOrder(OrderMasterDto orderMasterDto) throws WriteDbException {
-        if (orderMasterDto.getBuyerOpenid().equals("")){
-            return ServiceResponse.createByErrorMessage("用户未登录，需登录后在下单");
-        }
         return iOrderService.createOrder(orderMasterDto);
     }
 

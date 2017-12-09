@@ -62,9 +62,14 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public ServiceResponse createOrder(OrderMasterDto orderMasterDto) {
-        if (orderMasterDto.getBuyerOpenid().equals("")) {
-            return ServiceResponse.createByErrorMessage("用户未登录，请登录");
+        //验证传来的参数
+        if (orderMasterDto.getBuyerName() == null || orderMasterDto.getBuyerName().equals("")
+                || orderMasterDto.getBuyerPhone() == null || orderMasterDto.getBuyerPhone().equals("")
+                || orderMasterDto.getBuyerAddress() == null || orderMasterDto.getBuyerAddress().equals("")
+                || orderMasterDto.getBuyerOpenid() == null || orderMasterDto.getBuyerOpenid().equals("")){
+            return ServiceResponse.createByErrorMessage("参数错误");
         }
+        
         //先从redis和MySQL中取出购物车的数据
         String orderId = createOrderId();
         Jedis jedis = new Jedis();
