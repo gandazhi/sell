@@ -2,9 +2,10 @@ package com.gandazhi.sell.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ProductVo {
+public class ProductVo implements Serializable{
 
     private String categoryName;
 
