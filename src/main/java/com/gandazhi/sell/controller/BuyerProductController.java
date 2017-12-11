@@ -8,6 +8,7 @@ import com.gandazhi.sell.pojo.OrderMaster;
 import com.gandazhi.sell.service.IOrderService;
 import com.gandazhi.sell.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
